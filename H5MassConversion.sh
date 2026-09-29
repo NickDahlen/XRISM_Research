@@ -1,7 +1,7 @@
 #!/bin/bash -l
-#SBATCH --job-name=evtcl2dat3
-#SBATCH --output=h5Output3.log
-#SBATCH --error=h5Output3.log
+#SBATCH --job-name=evtcl2dat1
+#SBATCH --output=h5Output1.log
+#SBATCH --error=h5Output1.log
 #SBATCH --time=20:00:00
 #SBATCH --ntasks=2
 #SBATCH --cpus-per-task=4

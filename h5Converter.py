@@ -25,7 +25,7 @@ from constructResponse import construct_response
 #dir_path = results.directory
 
 
-dir_path = Path('/cluster/tufts/cosmology/ndahle01/XRISMFiles/ironDirectory')
+dir_path = Path('/cluster/tufts/cosmology/ndahle01/XRISMFiles/repairDirectory')
 
 print(f"Assigning directory: {dir_path}")
 
@@ -35,14 +35,20 @@ for item in dir_path.iterdir():
     fileNo = item.name
 
     print(f"Iterating over {fileNo}")
-    
-    filename = str(dir_path) + '/' + str(fileNo) + '/outputFile'
 
+    filename = str(dir_path) + '/' + str(fileNo) + '/outputFile'
+    
+    with open((filename + '.txt'), 'r') as infoFile:
+        RA = infoFile.readline()
+        declension = infoFile.readline()
+    
     # Process files
     obj = fits.open(filename + '.pi')
     arf = fits.open(filename + '.arf')
     rmf = fits.open(filename + '.rmf')
+    
 
+    
     # Extract the raw X-ray counts in each CCD channel
     # Number of channels is different if mos or pn camera
     # Each channel is associated with an energy, as extracted from the detector
@@ -59,11 +65,15 @@ for item in dir_path.iterdir():
     
     # Extract the size of the ROI from backscale
     # units are (0.05'')^2, so convert to sr
-    roi_size = obj['SPECTRUM'].header['BACKSCAL']*(0.05*1./60./60.*np.pi/180.)**2.
+
+    #roi_size = obj['SPECTRUM'].header['BACKSCAL']*(1./60./60.*np.pi/180.)**2.
+    arcsec2_to_sr = 2.350443e-11
+    roi_size = np.pi * (10 * 60)**2 * arcsec2_to_sr
+    #roi_size = 1
 
     print("ROI size accessed. Onto the hard part.")
     
-    cin_min, cin_max, cout_min, cout_max, det_res = construct_response((filename + '.rmf'), (filename + '.arf'), min_val = 1.e-6, nustar = False, hitomi = True, acis = False, ROSAT = False)
+    cin_min, cin_max, cout_min, cout_max, det_res, effA = construct_response((filename + '.rmf'), (filename + '.arf'), min_val = 1.e-6, nustar = False, hitomi = True, acis = False, ROSAT = False)
 
     print("Response construction over!")
     
@@ -86,6 +96,9 @@ for item in dir_path.iterdir():
     h5f.create_dataset('cin_max',data=cin_max)
     h5f.create_dataset('cout_min',data=cout_min)
     h5f.create_dataset('cout_max',data=cout_max)
+    h5f.create_dataset('effA',data=effA)
+    h5f.create_dataset('Declension',data=RA) 
+    h5f.create_dataset('RA',data=RA)
     h5f.close()
 
     print("File processed. Moving to next file!")
