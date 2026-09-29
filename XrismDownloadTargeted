@@ -1,4 +1,4 @@
-l#Now we begin the loop over all entries in our directory. Currently we're locked into only using the 0 directory.
+#Now we begin the loop over all entries in our directory. Currently we're locked into only using the 0 directory.
 
 echo "starting up!"
 
@@ -36,7 +36,8 @@ outfileroot=$fileNo/outputFile \
 regmode=DET \
 whichrmf=L \
 resolist=0 \
-regionfile=ALLPIX
+regionfile=NONE \
+pixlist="0-11,13-26,28-35"
 
 
 
@@ -47,19 +48,26 @@ punlearn xaexpmap
 xaexpmap ehkfile=$fileNo/auxil/xa${fileNo}.ehk gtifile=$fileNo/resolve/event_cl/xa${fileNo}rsl_p0px1000_cl.evt instrume=RESOLVE badimgfile=NONE pixgtifile=$fileNo/resolve/event_uf/xa${fileNo}rsl_px1000_exp.gti outfile=$fileNo/resolve/event_cl/N132D_rsl.expo outmaptype=EXPOSURE delta=20.0 numphi=1
 
 
-rightAscension=$(fkeyprint $fileNo/resolve/event_cl/xa${1}rsl_p0px1000_cl.evt[EVENTS] RA_OBJ | awk '/^RA_OBJ/ {print $3}')
+rightAscension=$(fkeyprint $fileNo/resolve/event_cl/xa${fileNo}rsl_p0px1000_cl.evt[EVENTS] RA_OBJ | awk '/^RA_OBJ/ {print $3}')
 echo "$rightAscension"
 
-declension=$(fkeyprint $fileNo/resolve/event_cl/xa${1}rsl_p0px1000_cl.evt[EVENTS] DEC_OBJ | awk '/^DEC_OBJ/ {print $3}')
+declension=$(fkeyprint $fileNo/resolve/event_cl/xa${fileNo}rsl_p0px1000_cl.evt[EVENTS] DEC_OBJ | awk '/^DEC_OBJ/ {print $3}')
 echo "$declension"
 
 punlearn xaarfgen
-xaarfgen xrtevtfile=$fileNo/resolve/event_cl/raytrace_N132D_rsl_pt.fits source_ra=${rightAscension} source_dec=${declension} telescop=XRISM instrume=RESOLVE emapfile=$fileNo/resolve/event_cl/N132D_rsl.expo regmode=DET regionfile=$fileNo/resolve/products/xa${fileNo}rsl_det_fullarray.reg sourcetype=POINT rmffile=$fileNo/outputFile.rmf erange="1.5 18.0 0 0" outfile=$fileNo/outputFile.arf numphoton=300000 qefile=CALDB contamifile=CALDB gatevalvefile=CALDB onaxisffile=CALDB onaxiscfile=CALDB mirrorfile=CALDB obstructfile=CALDB frontreffile=CALDB backreffile=CALDB pcolreffile=CALDB scatterfile=CALDB imgfile=NONE~
 
+xaarfgen xrtevtfile=$fileNo/resolve/event_cl/raytrace_N132D_rsl_pt.fits source_ra=${rightAscension} source_dec=${declension} telescop=XRISM instrume=RESOLVE emapfile=$fileNo/resolve/event_cl/N132D_rsl.expo regmode=DET regionfile=$fileNo/resolve/products/xa${fileNo}rsl_det_fullarray.reg sourcetype=FLATCIRCLE flatradius=10 seed=0 rmffile=$fileNo/outputFile.rmf erange="1.5 18.0 0 0" outfile=$fileNo/outputFile.arf numphoton=300000 qefile=CALDB contamifile=CALDB gatevalvefile=CALDB onaxisffile=CALDB onaxiscfile=CALDB mirrorfile=CALDB obstructfile=CALDB frontreffile=CALDB backreffile=CALDB pcolreffile=CALDB scatterfile=CALDB imgfile=NONE
+
+touch $fileNo/outputFile.txt
+echo "$rightAscension" > $fileNo/declensionInfo.txt
+echo "$declension" >> $fileNo/declensionInfo.txt
 
 rm -r $fileNo/auxil
 rm -r $fileNo/log
 rm -r $fileNo/resolve
 rm -r $fileNo/xtend
+
+echo "Right Ascension: $rightAscension"
+echo "Declension: $declension"
 
 echo "done!"
