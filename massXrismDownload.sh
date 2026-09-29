@@ -1,7 +1,7 @@
 #!/bin/bash -l
-#SBATCH --job-name=xrismDownload
-#SBATCH --output=xrismOutput.log
-#SBATCH --error=xrismOutput.log
+#SBATCH --job-name=xrismD14
+#SBATCH --output=xrismOutput14.log
+#SBATCH --error=xrismOutput14.log
 #SBATCH --time=20:00:00
 #SBATCH --ntasks=2
 #SBATCH --cpus-per-task=4
@@ -30,5 +30,4 @@ export HEADASLOGFILE="/tmp/heasoft_${SLURM_JOB_ID}.log"
 export PFILES="/tmp/pfiles_${SLURM_JOB_ID}:$HEADAS/syspfiles"
 mkdir -p "/tmp/pfiles_${SLURM_JOB_ID}"
 
-#bash XrismDownloadTargeted 9//902001020
-bash IronDownloadTargeted 3//300003010
+bash XrismDownloadTargeted 3//300060010
