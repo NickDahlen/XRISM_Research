@@ -1,0 +1,1 @@
+Programs for my currently in-progress research on axion-like particles using XRISM. To use, run massXrismDownload.sh on a hpc cluster with whatever files you are interested in input as arguments to massXrismDownload.sh in the last line. From there, move the files into their own directory, run H5MassConversion over said directory, and run analysis using dataPipeline.ipynb. 
