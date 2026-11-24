@@ -30,6 +30,8 @@ mkdir -p "/tmp/pfiles_${SLURM_JOB_ID}"
 
 obs_id1=$2
 obs_id2=$3
+obs_id3=$4
 
 python scanAllProfiles.py -f newStorageFull/$obs_id1 -s 2
 python scanAllProfiles.py -f newStorageFull/$obs_id2 -s 2
+python scanAllProfiles.py -f newStorageFull/$obs_id3 -s 2

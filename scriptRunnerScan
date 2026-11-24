@@ -1,0 +1,32 @@
+#!/bin/bash
+
+input_file="obsIDsRescued.txt"
+i=0
+
+while IFS= read -r id1 || [[ -n "$id1" ]]; do
+    # Read the second ID, including a final line without a newline
+    if ! IFS= read -r id2; then
+        if [[ -z "$id2" ]]; then
+            echo "Warning: Incomplete group starting at ID '$id1' at end of file; skipping."
+            break
+        fi
+    fi
+
+    # Read the third ID, including a final line without a newline
+    if ! IFS= read -r id3; then
+        if [[ -z "$id3" ]]; then
+            echo "Warning: Incomplete group '$id1' '$id2' at end of file; skipping."
+            break
+        fi
+    fi
+
+    sbatch \
+        --job-name="prof$i" \
+        --output="profGenOutput$i.log" \
+        --error="profGenOutput$i.log" \
+        ScanProfile.sh "$i" "$id1" "$id2" "$id3"
+
+    ((i++))
+done < "$input_file"
+
+echo "Submitted $i jobs."
